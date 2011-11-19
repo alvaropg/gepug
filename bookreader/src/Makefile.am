@@ -22,7 +22,9 @@ bin_PROGRAMS = bookreader
 bookreader_SOURCES = \
 	main.c \
 	bookreader.h \
-	bookreader.c	
+	bookreader.c \
+	br-text-view.h \
+	br-text-view.c	
 
 bookreader_LDFLAGS = \
 	-Wl,--export-dynamic

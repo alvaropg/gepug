@@ -17,9 +17,11 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "bookreader.h"
+#include "br-text-view.h"
 
 #include <glib/gi18n.h>
 #include <gepub.h>
+#include <gtk/gtk.h>
 
 /* For testing propose use the local (not installed) ui file */
 /* #define UI_FILE PACKAGE_DATA_DIR"/bookreader/ui/bookreader.ui" */
@@ -27,13 +29,20 @@
 
 G_DEFINE_TYPE (Bookreader, bookreader, GTK_TYPE_APPLICATION);
 
+void on_next_clicked (GtkButton *button, gpointer data);
+
+void
+on_next_clicked (GtkButton *button, gpointer data)
+{
+	
+}
+
 /* Create a new window loading a file */
 static void
 bookreader_new_window (GApplication *app,
 					   GFile        *file)
 {
-	GtkWidget *window;
-	GtkTextBuffer *buffer;
+	GtkWidget *window, *main_box, *view;
 	GtkBuilder *builder;
 	GError* error = NULL;
 
@@ -50,7 +59,9 @@ bookreader_new_window (GApplication *app,
 
 	/* Get the window object from the ui file */
 	window = GTK_WIDGET (gtk_builder_get_object (builder, "window"));
-	buffer = GTK_TEXT_BUFFER (gtk_builder_get_object (builder, "current_page_buffer"));
+	main_box = GTK_WIDGET (gtk_builder_get_object (builder, "main_box"));
+	view = GTK_WIDGET (br_text_view_new ());
+	gtk_box_pack_start (GTK_BOX (main_box), view, TRUE, TRUE, 0);
 	g_object_unref (builder);
 	
 	gtk_window_set_application (GTK_WINDOW (window), GTK_APPLICATION (app));
@@ -58,6 +69,8 @@ bookreader_new_window (GApplication *app,
 		const gchar *file_path;
 		GEPubDoc *epub;
 		gchar *content;
+		gchar *pag2;
+		gint character;
 
 		file_path = g_file_get_path (file);
 		epub = gepub_doc_new (file_path);
@@ -74,8 +87,10 @@ bookreader_new_window (GApplication *app,
 		gepub_doc_go_next (epub);
 		gepub_doc_go_next (epub);
 		content = gepub_doc_get_current_markup (epub);
-		
-		gtk_text_buffer_set_text (buffer, content, -1);
+		character = br_text_view_set_text (BR_TEXT_VIEW (view), content);
+		//g_print ("num: %d de %d\n", character, g_utf8_strlen (content, -1));
+		//pag2 = g_utf8_substring (content, character, g_utf8_strlen (content, -1));
+		//g_print ("Pag2: %s\n", pag2);
 	}
 	gtk_widget_show_all (GTK_WIDGET (window));
 }
