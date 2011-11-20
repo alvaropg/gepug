@@ -24,7 +24,9 @@ bookreader_SOURCES = \
 	bookreader.h \
 	bookreader.c \
 	br-text-view.h \
-	br-text-view.c	
+	br-text-view.c \
+	br-ebook-model.h \
+	br-ebook-model.c	
 
 bookreader_LDFLAGS = \
 	-Wl,--export-dynamic

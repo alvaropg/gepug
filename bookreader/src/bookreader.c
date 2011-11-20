@@ -18,9 +18,9 @@
  */
 #include "bookreader.h"
 #include "br-text-view.h"
+#include "br-ebook-model.h"
 
 #include <glib/gi18n.h>
-#include <gepub.h>
 #include <gtk/gtk.h>
 
 /* For testing propose use the local (not installed) ui file */
@@ -66,6 +66,14 @@ bookreader_new_window (GApplication *app,
 	
 	gtk_window_set_application (GTK_WINDOW (window), GTK_APPLICATION (app));
 	if (file != NULL) {
+		BrEBookModel *model;
+		gchar *title;
+		
+		model = br_ebook_model_new_from_file (file);
+		br_ebook_model_open (model);
+		g_object_get (G_OBJECT (model),	"title", &title, NULL);
+		gtk_window_set_title (GTK_WINDOW (window), title);
+		/*
 		const gchar *file_path;
 		GEPubDoc *epub;
 		gchar *content;
@@ -88,6 +96,7 @@ bookreader_new_window (GApplication *app,
 		gepub_doc_go_next (epub);
 		content = gepub_doc_get_current_markup (epub);
 		character = br_text_view_set_text (BR_TEXT_VIEW (view), content);
+		*/
 		//g_print ("num: %d de %d\n", character, g_utf8_strlen (content, -1));
 		//pag2 = g_utf8_substring (content, character, g_utf8_strlen (content, -1));
 		//g_print ("Pag2: %s\n", pag2);
